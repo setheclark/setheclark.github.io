@@ -41,6 +41,15 @@
                 <img data-src="https://developers.google.com/cardboard/images/one-cardboard.png"/>
             </section>
             <section>
+                <h2>Tools to use:</h2>
+                <ul class="fragment">
+                <li>Android SDK</li>
+                <li>Unity 3D</li>
+                <li>Three.js</li>
+                <li>LibGDX</li>
+                </ul>
+            </section>
+            <section>
             <h3>Android SDK provides:</h3>
                 <ul class="fragment">
                         <li>Lens distortion correction.</li>
@@ -50,6 +59,153 @@
                         <li>Stereo geometry configuration.</li>
                         <li>User input event handling.</li>
                         </ul>
+            </section>
+            <section>
+                <h3>Unity Plugins provide:</h3>
+                <ul class="fragment">
+                <li>User head tracking</li>
+                <li>Side-by-side stereo rendering</li>
+                <li>Automatic stereo configuration for a specific Cardboard model</li>
+                <li>Distortion correction for Cardboard lenses</li>
+                <li>Support for Image Effects and Deferred Rendering, or bypassing this support for increased FPS.</li>
+                <li>Interaction with Canvas UI elements using gaze and the trigger.</li>
+                <li>Simulate a user's head movement in Unity play mode using the mouse and alt/control keys to pan or tilt the camera.</li>
+                <li>...</li>
+                </ul>
+            </section>
+            <section>
+                <section>
+                    <h2>Using the Android SDK</h2>
+                    <p class="fragment" data-fragment-index="1">First, you'll need to add the dependencies to your project' lib folder</p>
+                    <ul class="fragment" data-fragment-index="1">
+                    <li>cardboard.jar</li>
+                    <li>libprotobuf-java-2.6-nano.jar</li>
+                    </ul>
+                    <p class="fragment" data-fragment-index="1">Both are found in the <a href="https://github.com/googlesamples/cardboard-java/tree/master/CardboardSample/libs">Cardboard Sample Github</a> page.
+                    <p class="fragment" data-fragment-index="2">Add to your build.gradle.</p>
+                    <pre class="fragment" data-fragment-index="2"><code class="groovy">
+dependencies {
+     ...
+     compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+                    </code></pre>
+                </section>
+                <section>
+                    <h2>Modify your manifest</h2>
+                    <p class="fragment" data-fragment-index="1">Add required permissions</p>
+                    <pre class="fragment" data-fragment-index="1"><code class="xml">
+&lt;uses-permission android:name="android.permission.NFC" /&gt;
+&lt;uses-permission android:name="android.permission.VIBRATE" /&gt;
+&lt;uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /&gt;
+&lt;uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /&gt;
+                    </code></pre>
+                    <p class="fragment" data-fragment-index="2">Declare OpenGL ES 2.0 required</p>
+                    <pre class="fragment" data-fragment-index="2"><code class="xml">
+&lt;uses-feature android:glEsVersion="0x00020000" android:required="true" /&gt;
+                    </code></pre>
+                    <p class="fragment" data-fragment-index="2">Set Min API</p>
+                    <pre class="fragment" data-fragment-index="2"><code class="xml">
+&lt;uses-sdk android:minSdkVersion="16" android:targetSdkVersion="23" /&gt;
+                    </code></pre>
+                </section>
+                <section>
+                    <h2>Modify your manifest</h2>
+                    <p class="fragment" data-fragment-index="1">Modify your Cardboard Activity</p>
+                    <pre class="fragment" data-fragment-index="1"><code class="xml">
+&lt;activity
+     android:name=".MyCardboardActivity"
+     android:screenOrientation="landscape"&gt;
+     ...
+
+     &lt;intent-filter&gt;
+          &lt;category android:name="com.google.intent.category.CARDBOARD" /&gt;
+     &lt;/intent-filter&gt;
+&lt;/activity&gt;
+                    </code></pre>
+                </section>
+                <section>
+                    <h2>Define a CardboardView</h2>
+                    <pre class="fragment" data-fragment-index="1"><code class="xml">
+&lt;com.google.vrtoolkit.cardboard.CardboardView
+     android:id="@+id/cardboard_view"
+     android:layout_width="fill_parent"
+     android:layout_height="fill_parent" /&gt;
+                </code></pre>
+                <p class="fragment" data-fragment-index="1">
+                CardboardView is a convenience extension of GLSurfaceView.</p>
+                </section>
+                <section>
+                    <h2>Create Cardboard Activity</h2>
+                    <p class="fragment" data-fragment-index="1">Extend CardboardActivity</p>
+                    <pre class="fragment" data-fragment-index="1"><code class="java">
+public class MyCardboardActivity extends CardboardActivity 
+        implements CardboardView.StereoRenderer {
+    ...
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.cardboard_layout);
+        CardboardView cardboardView = 
+                (CardboardView) findViewById(R.id.cardboard_view);
+        
+        cardboardView.setRenderer(this);
+        
+        setCardboardView(cardboardView);
+    }
+}                
+                    </code></pre>
+                </section>
+                <section>
+                <h2>Render something!</h2>
+                <pre class="fragment" data-fragment-index="1"><code class="java">
+public class MyCardboardActivity extends CardboardActivity 
+        implements CardboardView.StereoRenderer {
+
+    @Override
+    public void onNewFrame(HeadTransform headTransform) {
+        // Get head tranformation matrix
+        headTransform.getHeadView(headView, 0);
+    }
+
+    @Override
+    public void onDrawEye(Eye eye) {
+        // Draw frame for each eye.  
+        // Called twice per frame.
+    }
+}
+    </code></pre>
+                </section>
+                <section>
+                <h2>Finally...Handle user input</h2>
+                <pre class="fragment" data-fragment-index="1"><code class="java">
+public class MyCardboardActivity extends CardboardActivity 
+        implements CardboardView.StereoRenderer {
+
+    @Override
+    public void onCardboardTrigger() {
+        // Do something.
+    }
+}
+    </code></pre>
+                </section>
+            </section>
+            <section>
+            <section>
+                <h2>Designing for Cardboard</h2>
+                <p>Google did this better than I could.  So go read <a href="http://www.google.com/design/spec-vr/designing-for-google-cardboard/a-new-dimension.html#">their documentation</a>... 
+            </section>
+            </section>
+            <section>
+            <section>
+                <h2>Using Unity3d</h2>
+                <ul class="fragment"  data-fragment-index="1">
+                <li><a href="https://developers.google.com/cardboard/unity/">Documentation</a></li>
+                <li><a href="https://io2015codelabs.appspot.com/codelabs/cardboard-unity#1">Code Lab</a></li>
+                </ul>
+            </section>
+            </section>
+            <section>
+                <h1>Questions?</h1>
             </section>
         </div>
     </div>
