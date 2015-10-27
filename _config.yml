@@ -2,9 +2,9 @@ name: Seth Clark
 description: Android Developer
 avatar: https://avatars1.githubusercontent.com/u/2073653
 footer-links:
-	email: seth@sethclark.io
-	github: setheclark
-	twitter: setheclark
+  email: seth@sethclark.io
+  github: setheclark
+  twitter: setheclark
 
 url: http://sethclark.io
 
@@ -18,7 +18,7 @@ gems:
   - jekyll-sitemap
 
 exclude:
-	- Gemfile
-	- Gemfile.lock
-	- README.md
-	- CNAME
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - CNAME
